@@ -100,13 +100,13 @@ class HolodeckAgent:
         )
         # Teleport bit flags: See values from the TeleportFlags class.
         self._teleport_type_buffer = self._client.malloc(
-            name + "_teleport_flag", [1], np.uint8
+            f"{name}_teleport_flag", [1], np.uint8
         )
         self._teleport_buffer = self._client.malloc(
-            name + "_teleport_command", [12], np.float32
+            f"{name}_teleport_command", [12], np.float32
         )
         self._control_scheme_buffer = self._client.malloc(
-            name + "_control_scheme", [1], np.uint8
+            f"{name}_control_scheme", [1], np.uint8
         )
         self._current_control_scheme = 0
         self.set_control_scheme(0)
@@ -166,7 +166,7 @@ class HolodeckAgent:
 
         """
         if location is not None:
-            np.copyto(self._teleport_buffer[0:3], location)
+            np.copyto(self._teleport_buffer[:3], location)
             self._teleport_type_buffer[0] |= TeleportFlags.TELEPORT_LOCATION
         if rotation is not None:
             np.copyto(self._teleport_buffer[3:6], rotation)
@@ -183,7 +183,7 @@ class HolodeckAgent:
                 (see :ref:`coordinate-system`))
 
         """
-        np.copyto(self._teleport_buffer[0:3], location)
+        np.copyto(self._teleport_buffer[:3], location)
         np.copyto(self._teleport_buffer[3:6], rotation)
         np.copyto(self._teleport_buffer[6:9], velocity)
         np.copyto(self._teleport_buffer[9:12], angular_velocity)
@@ -235,11 +235,7 @@ class HolodeckAgent:
         Returns:
             :obj:`bool`: If the agent has a sensor or not
         """
-        for sensor_type in self.sensors.items():
-            if sensor_type is RGBCamera:
-                return True
-
-        return False
+        return any(sensor_type is RGBCamera for sensor_type in self.sensors.items())
 
     @property
     def action_space(self):
@@ -344,7 +340,7 @@ class UavAgent(HolodeckAgent):
         ]
 
     def __repr__(self):
-        return "UavAgent " + self.name
+        return f"UavAgent {self.name}"
 
     def get_joint_constraints(self, joint_name):
         return None
@@ -422,7 +418,7 @@ class SphereAgent(HolodeckAgent):
             np.copyto(self._action_buffer, to_act)
 
     def __repr__(self):
-        return "SphereAgent " + self.name
+        return f"SphereAgent {self.name}"
 
 
 class AndroidAgent(HolodeckAgent):
@@ -473,7 +469,7 @@ class AndroidAgent(HolodeckAgent):
         ]
 
     def __repr__(self):
-        return "AndroidAgent " + self.name
+        return f"AndroidAgent {self.name}"
 
     @staticmethod
     def joint_ind(joint_name):
@@ -616,7 +612,7 @@ class HandAgent(HolodeckAgent):
         ]
 
     def __repr__(self):
-        return "HandAgent " + self.name
+        return f"HandAgent {self.name}"
 
     @staticmethod
     def joint_ind(joint_name):
@@ -694,7 +690,7 @@ class NavAgent(HolodeckAgent):
         return None
 
     def __repr__(self):
-        return "NavAgent " + self.name
+        return f"NavAgent {self.name}"
 
     def __act__(self, action):
         np.copyto(self._action_buffer, np.array(action))
@@ -739,7 +735,7 @@ class TurtleAgent(HolodeckAgent):
         return None
 
     def __repr__(self):
-        return "TurtleAgent " + self.name
+        return f"TurtleAgent {self.name}"
 
     def __act__(self, action):
         np.copyto(self._action_buffer, np.array(action))
@@ -787,7 +783,7 @@ class AgentDefinition:
         self.starting_rot = starting_rot
         self.existing = existing
         self.max_height = max_height
-        self.sensors = sensors or list()
+        self.sensors = sensors or []
         self.is_main_agent = is_main_agent
         for i, sensor_def in enumerate(self.sensors):
             if not isinstance(sensor_def, SensorDefinition):

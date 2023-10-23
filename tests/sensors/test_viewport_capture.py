@@ -44,11 +44,11 @@ def test_viewport_capture(resolution, request):
 
     binary_path = holodeck.packagemanager.get_binary_path_for_package("DefaultWorlds")
     with holodeck.environments.HolodeckEnvironment(
-        scenario=cfg,
-        binary_path=binary_path,
-        show_viewport=False,
-        uuid=str(uuid.uuid4()),
-    ) as env:
+            scenario=cfg,
+            binary_path=binary_path,
+            show_viewport=False,
+            uuid=str(uuid.uuid4()),
+        ) as env:
         env.should_render_viewport(True)
 
         env.tick(5)
@@ -58,7 +58,9 @@ def test_viewport_capture(resolution, request):
         assert pixels.shape == (resolution, resolution, 3)
         baseline = cv2.imread(
             os.path.join(
-                request.fspath.dirname, "expected", "{}_viewport.png".format(resolution)
+                request.fspath.dirname,
+                "expected",
+                f"{resolution}_viewport.png",
             )
         )
         err = mean_square_err(pixels, baseline)

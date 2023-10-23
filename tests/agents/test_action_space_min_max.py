@@ -83,11 +83,7 @@ config = {
 
 
 def is_close(a, b):
-    for x, y in zip(a, b):
-        if not math.isclose(x, y, rel_tol=1e-05):
-            return False
-
-    return True
+    return all(math.isclose(x, y, rel_tol=1e-05) for x, y in zip(a, b))
 
 
 def check_constraints(x, y):

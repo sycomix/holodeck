@@ -19,8 +19,9 @@ def test_reward_is_given(complete_mazeworld_states):
     for _, reward, _, _ in complete_mazeworld_states:
         total_reward += reward
 
-    assert EXPECTED_REWARD * 0.90 <= total_reward <= EXPECTED_REWARD * 1.10, \
-        "The reward received was {} but we expected within 10% of {}".format(total_reward, EXPECTED_REWARD)
+    assert (
+        EXPECTED_REWARD * 0.90 <= total_reward <= EXPECTED_REWARD * 1.10
+    ), f"The reward received was {total_reward} but we expected within 10% of {EXPECTED_REWARD}"
 
 
 def test_reward_valid_value(complete_mazeworld_states):
@@ -31,5 +32,4 @@ def test_reward_valid_value(complete_mazeworld_states):
 
     """
     for _, reward, _, _ in complete_mazeworld_states:
-        assert reward == 0.0 or reward == 1.0, \
-            "Expected a 1 or a 0, instead got a {}".format(reward)
+        assert reward in [0.0, 1.0], f"Expected a 1 or a 0, instead got a {reward}"

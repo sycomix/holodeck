@@ -31,4 +31,4 @@ def test_abuse_falling(agent_abuse_world):
         if abuse_world.tick()[agent]["AbuseSensor"] == 1:
             abused = True
 
-    assert abused, "Agent {} was not abused!".format(agent)
+    assert abused, f"Agent {agent} was not abused!"

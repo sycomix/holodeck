@@ -70,7 +70,7 @@ def generate_mazeworld_walkthrough():
     def on_step(state_reward_terminal_):
         on_step.states.append(state_reward_terminal_)
 
-    on_step.states = list()
+    on_step.states = []
 
     env = holodeck.make("MazeWorld-FinishMazeSphere", show_viewport=False)
 

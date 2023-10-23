@@ -62,10 +62,7 @@ def convert_unicode(value):
     if isinstance(value, list):
         return [convert_unicode(item) for item in value]
 
-    if isinstance(value, unicode):
-        return value.encode("utf-8")
-
-    return value
+    return value.encode("utf-8") if isinstance(value, unicode) else value
 
 
 def get_os_key():
@@ -97,7 +94,7 @@ def human_readable_size(size_bytes):
     base = int(math.floor(math.log(size_bytes, 1024)))
     power = math.pow(1024, base)
     size = round(size_bytes / power, 2)
-    return "%s %s" % (size, size_name[base])
+    return f"{size} {size_name[base]}"
 
 
 def draw_line(env, start, end, color=None, thickness=10.0):
@@ -168,21 +165,18 @@ def _windows_check_process_alive(pid):
     import win32process
     import win32con
 
-    if (
+    return (
         win32process.GetExitCodeProcess(
             win32api.OpenProcess(
                 win32con.PROCESS_QUERY_LIMITED_INFORMATION, win32con.FALSE, pid
             )
         )
         == win32con.STILL_ACTIVE
-    ):
-        return True
-
-    return False
+    )
 
 
 def _linux_check_process_alive(pid):
-    return os.path.exists("/proc/{}".format(pid))
+    return os.path.exists(f"/proc/{pid}")
 
 
 def check_process_alive(pid):
@@ -198,18 +192,15 @@ def log_paths():
     Returns:
         :obj:`str`: The file path of where the logs are located
     """
-    paths = []
-    for package in holodeck.packagemanager.installed_packages():
-        paths.append(
-            os.path.join(
-                get_holodeck_path(),
-                "worlds",
-                package,
-                "{}NoEditor".format(get_os_key()),
-                "Holodeck",
-                "Saved",
-                "Logs",
-            )
+    return [
+        os.path.join(
+            get_holodeck_path(),
+            "worlds",
+            package,
+            f"{get_os_key()}NoEditor",
+            "Holodeck",
+            "Saved",
+            "Logs",
         )
-
-    return paths
+        for package in holodeck.packagemanager.installed_packages()
+    ]

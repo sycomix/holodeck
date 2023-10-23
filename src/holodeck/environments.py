@@ -134,7 +134,7 @@ class HolodeckEnvironment:
             elif os.name == "nt":
                 self.__windows_start_process__(binary_path, world_key, verbose=verbose)
             else:
-                raise HolodeckException("Unknown platform: " + os.name)
+                raise HolodeckException(f"Unknown platform: {os.name}")
 
         # Initialize Client
         self._client = HolodeckClient(self._uuid, start_world)
@@ -205,20 +205,21 @@ class HolodeckEnvironment:
         Returns:
             :obj:`str`: Information in a string format.
         """
-        result = list()
-        result.append("Agents:\n")
+        result = ["Agents:\n"]
         for agent_name in self.agents:
             agent = self.agents[agent_name]
-            result.append("\tName: ")
-            result.append(agent.name)
-            result.append("\n\tType: ")
-            result.append(type(agent).__name__)
-            result.append("\n\t")
-            result.append("Sensors:\n")
+            result.extend(
+                (
+                    "\tName: ",
+                    agent.name,
+                    "\n\tType: ",
+                    type(agent).__name__,
+                    "\n\t",
+                    "Sensors:\n",
+                )
+            )
             for _, sensor in agent.sensors.items():
-                result.append("\t\t")
-                result.append(sensor.name)
-                result.append("\n")
+                result.extend(("\t\t", sensor.name, "\n"))
         return "".join(result)
 
     def _load_scenario(self):
@@ -236,8 +237,7 @@ class HolodeckEnvironment:
             for sensor in agent["sensors"]:
                 if "sensor_type" not in sensor:
                     raise HolodeckException(
-                        "Sensor for agent {} is missing required key "
-                        "'sensor_type'".format(agent["agent_name"])
+                        f"""Sensor for agent {agent["agent_name"]} is missing required key 'sensor_type'"""
                     )
 
                 # Default values for a sensor
@@ -499,9 +499,7 @@ class HolodeckEnvironment:
         self._total_ticks += 1
         if self._total_ticks == self._max_ticks:
             raise HolodeckException(
-                "The designated tick limit has been reached: {} tick(s)".format(
-                    self._total_ticks
-                )
+                f"The designated tick limit has been reached: {self._total_ticks} tick(s)"
             )
 
     def _acquire_catch_crash(self):
@@ -623,15 +621,11 @@ class HolodeckEnvironment:
 
         if prop_type not in available_props:
             raise HolodeckException(
-                "{} not an available prop. Available prop types: {}".format(
-                    prop_type, available_props
-                )
+                f"{prop_type} not an available prop. Available prop types: {available_props}"
             )
         if material not in available_materials and material != "":
             raise HolodeckException(
-                "{} not an available material. Available material types: {}".format(
-                    material, available_materials
-                )
+                f"{material} not an available material. Available material types: {available_materials}"
             )
 
         self.send_world_command(
@@ -680,7 +674,7 @@ class HolodeckEnvironment:
                 (see :class:`~holodeck.agents.ControlSchemes`)
         """
         if agent_name not in self.agents:
-            print("No such agent %s" % agent_name)
+            print(f"No such agent {agent_name}")
         else:
             self.agents[agent_name].set_control_scheme(control_scheme)
 
@@ -711,7 +705,7 @@ class HolodeckEnvironment:
 
         out_stream = sys.stdout if verbose else open(os.devnull, "w")
         loading_semaphore = posix_ipc.Semaphore(
-            "/HOLODECK_LOADING_SEM" + self._uuid,
+            f"/HOLODECK_LOADING_SEM{self._uuid}",
             os.O_CREAT | os.O_EXCL,
             initial_value=0,
         )
@@ -725,13 +719,13 @@ class HolodeckEnvironment:
                 binary_path,
                 task_key,
                 "-HolodeckOn",
-                "-opengl" + str(gl_version),
+                f"-opengl{str(gl_version)}",
                 "-LOG=HolodeckLog.txt",
                 "-ForceRes",
-                "-ResX=" + str(self._window_size[1]),
-                "-ResY=" + str(self._window_size[0]),
-                "--HolodeckUUID=" + self._uuid,
-                "-TicksPerSec=" + str(self._ticks_per_sec),
+                f"-ResX={str(self._window_size[1])}",
+                f"-ResY={str(self._window_size[0])}",
+                f"--HolodeckUUID={self._uuid}",
+                f"-TicksPerSec={str(self._ticks_per_sec)}",
             ],
             stdout=out_stream,
             stderr=out_stream,
@@ -764,10 +758,10 @@ class HolodeckEnvironment:
                 "-HolodeckOn",
                 "-LOG=HolodeckLog.txt",
                 "-ForceRes",
-                "-ResX=" + str(self._window_size[1]),
-                "-ResY=" + str(self._window_size[0]),
-                "-TicksPerSec=" + str(self._ticks_per_sec),
-                "--HolodeckUUID=" + self._uuid,
+                f"-ResX={str(self._window_size[1])}",
+                f"-ResY={str(self._window_size[0])}",
+                f"-TicksPerSec={str(self._ticks_per_sec)}",
+                f"--HolodeckUUID={self._uuid}",
             ],
             stdout=out_stream,
             stderr=out_stream,
@@ -835,9 +829,6 @@ class HolodeckEnvironment:
         if isinstance(obj, dict):  # Deep copy dictionary
             copy = dict()
             for k, v in obj.items():
-                if isinstance(v, dict):
-                    copy[k] = self._create_copy(v)
-                else:
-                    copy[k] = np.copy(v)
+                copy[k] = self._create_copy(v) if isinstance(v, dict) else np.copy(v)
             return copy
         return None  # Not implemented for other types

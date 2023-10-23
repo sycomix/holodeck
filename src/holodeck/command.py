@@ -110,14 +110,13 @@ class Command:
             :obj:`str`: This object as a json string.
 
         """
-        to_return = (
+        return (
             '{ "type": "'
             + self._command_type
             + '", "params": ['
             + ",".join(self._parameters)
             + "]}"
         )
-        return to_return
 
 
 class CommandCenter:

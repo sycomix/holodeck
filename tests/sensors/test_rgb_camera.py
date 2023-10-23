@@ -55,11 +55,11 @@ def test_rgb_camera(resolution, request):
     binary_path = holodeck.packagemanager.get_binary_path_for_package("DefaultWorlds")
 
     with holodeck.environments.HolodeckEnvironment(
-        scenario=cfg,
-        binary_path=binary_path,
-        show_viewport=False,
-        uuid=str(uuid.uuid4()),
-    ) as env:
+            scenario=cfg,
+            binary_path=binary_path,
+            show_viewport=False,
+            uuid=str(uuid.uuid4()),
+        ) as env:
 
         for _ in range(5):
             env.tick()
@@ -67,7 +67,7 @@ def test_rgb_camera(resolution, request):
         pixels = env.tick()["TestCamera"][:, :, 0:3]
         baseline = cv2.imread(
             os.path.join(
-                request.fspath.dirname, "expected", "{}.png".format(resolution)
+                request.fspath.dirname, "expected", f"{resolution}.png"
             )
         )
         err = mean_square_err(pixels, baseline)

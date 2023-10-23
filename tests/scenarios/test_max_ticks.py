@@ -86,7 +86,6 @@ def test_max_ticks_reset(set_max_tick_env):
         for _ in range(9):
             set_max_tick_env.tick(1)
 
-        assert True
     except HolodeckException:
         assert False, "A HolodeckException was thrown when using reset()!"
 
@@ -138,6 +137,5 @@ def test_no_max_ticks():
         no_max_tick_env.act("agent0", command)
         for _ in range(50):
             no_max_tick_env.tick(1)
-        assert True
     except HolodeckException:
         assert False, "A HolodeckException was thrown with no max_tick set!"

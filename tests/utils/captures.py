@@ -14,11 +14,7 @@ def display_multiple(images: List[Tuple[List, Optional[str]]]):
             list of image data
     """
     for image in images:
-        if isinstance(image, tuple):
-            image_data = image[0]
-        else:
-            image_data = image
-
+        image_data = image[0] if isinstance(image, tuple) else image
         if isinstance(image, tuple) and len(image) > 1:
             title = image[1]
         else:
@@ -51,7 +47,7 @@ def compare_rgb_sensor_data_with_baseline(
     """
     pixels = sensor_data[:, :, 0:3]
     baseline = cv2.imread(
-        os.path.join(base_path, "expected", "{}.png".format(baseline_name))
+        os.path.join(base_path, "expected", f"{baseline_name}.png")
     )
     if show_images:
         # Show images when debugging--this will block tests until user input
@@ -83,4 +79,4 @@ def write_image_from_rgb_sensor_data(sensor_data, base_path, name):
         name: Name of file to save, not including `png` file extension
     """
     pixels = sensor_data[:, :, 0:3]
-    cv2.imwrite(os.path.join(base_path, "expected", "{}.png".format(name)), pixels)
+    cv2.imwrite(os.path.join(base_path, "expected", f"{name}.png"), pixels)

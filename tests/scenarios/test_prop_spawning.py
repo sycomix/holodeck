@@ -127,15 +127,13 @@ def test_tagged_prop_config():
     binary_path = holodeck.packagemanager.get_binary_path_for_package("DefaultWorlds")
 
     with holodeck.environments.HolodeckEnvironment(
-        scenario=config,
-        binary_path=binary_path,
-        show_viewport=False,
-        uuid=str(uuid.uuid4()),
-    ) as env:
+            scenario=config,
+            binary_path=binary_path,
+            show_viewport=False,
+            uuid=str(uuid.uuid4()),
+        ) as env:
         env.agents["uav0"].teleport([0, 0, 0.1])
 
-        cum_reward = 0
-        for _ in range(50):
-            cum_reward += env.tick()["DistanceTask"][0]
+        cum_reward = sum(env.tick()["DistanceTask"][0] for _ in range(50))
         print(cum_reward)
         assert cum_reward > 2, "Distance task did not get reference to tagged prop!"

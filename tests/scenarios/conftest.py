@@ -12,7 +12,7 @@ def pytest_generate_tests(metafunc):
     for config, full_path in pm._iter_packages():
         for world_entry in config["worlds"]:
             for config, full_path in pm._iter_scenarios(world_entry["name"]):
-                scenarios.add("{}-{}".format(config["world"], config["name"]))
+                scenarios.add(f'{config["world"]}-{config["name"]}')
 
     if "scenario" in metafunc.fixturenames:
         metafunc.parametrize("scenario", scenarios)

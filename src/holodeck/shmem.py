@@ -36,10 +36,10 @@ class Shmem:
         self._mem_path = None
         self._mem_pointer = None
         if os.name == "nt":
-            self._mem_path = "/HOLODECK_MEM" + uuid + "_" + name
+            self._mem_path = f"/HOLODECK_MEM{uuid}_{name}"
             self._mem_pointer = mmap.mmap(0, size_bytes, self._mem_path)
         elif os.name == "posix":
-            self._mem_path = "/dev/shm/HOLODECK_MEM" + uuid + "_" + name
+            self._mem_path = f"/dev/shm/HOLODECK_MEM{uuid}_{name}"
             f = os.open(self._mem_path, os.O_CREAT | os.O_TRUNC | os.O_RDWR)
             os.ftruncate(f, size_bytes)
             os.fsync(f)
@@ -49,7 +49,7 @@ class Shmem:
                 f
             )  # we don't need the file descriptor to stay open. see the man page
         else:
-            raise HolodeckException("Currently unsupported os: " + os.name)
+            raise HolodeckException(f"Currently unsupported os: {os.name}")
 
         self.np_array = np.ndarray(shape, dtype=dtype)
         self.np_array.data = (Shmem._numpy_to_ctype[dtype] * size).from_buffer(
@@ -58,12 +58,12 @@ class Shmem:
 
     def unlink(self):
         """unlinks the shared memory"""
-        if os.name == "posix":
-            self.__linux_unlink__()
-        elif os.name == "nt":
+        if os.name == "nt":
             self.__windows_unlink__()
+        elif os.name == "posix":
+            self.__linux_unlink__()
         else:
-            raise HolodeckException("Currently unsupported os: " + os.name)
+            raise HolodeckException(f"Currently unsupported os: {os.name}")
 
     def __linux_unlink__(self):
         del self.np_array

@@ -34,10 +34,10 @@ class HolodeckSensor:
         self._client = client
         self.agent_name = agent_name
         self.agent_type = agent_type
-        self._buffer_name = self.agent_name + "_" + self.name
+        self._buffer_name = f"{self.agent_name}_{self.name}"
 
         self._sensor_data_buffer = self._client.malloc(
-            self._buffer_name + "_sensor_data", self.data_shape, self.dtype
+            f"{self._buffer_name}_sensor_data", self.data_shape, self.dtype
         )
 
         self.config = {} if config is None else config
@@ -246,15 +246,12 @@ class ViewportCapture(HolodeckSensor):
 
         self.config = {} if config is None else config
 
-        width = 1280
         height = 720
 
         if "CaptureHeight" in self.config:
             height = self.config["CaptureHeight"]
 
-        if "CaptureWidth" in self.config:
-            width = self.config["CaptureWidth"]
-
+        width = self.config["CaptureWidth"] if "CaptureWidth" in self.config else 1280
         self.shape = (height, width, 4)
 
         super(ViewportCapture, self).__init__(
@@ -292,15 +289,12 @@ class RGBCamera(HolodeckSensor):
 
         self.config = {} if config is None else config
 
-        width = 256
         height = 256
 
         if "CaptureHeight" in self.config:
             height = self.config["CaptureHeight"]
 
-        if "CaptureWidth" in self.config:
-            width = self.config["CaptureWidth"]
-
+        width = self.config["CaptureWidth"] if "CaptureWidth" in self.config else 256
         self.shape = (height, width, 4)
 
         super(RGBCamera, self).__init__(
@@ -327,7 +321,7 @@ class RGBCamera(HolodeckSensor):
         """
         if not isinstance(ticks_per_capture, int) or ticks_per_capture < 1:
             raise HolodeckConfigurationException(
-                "Invalid ticks_per_capture value " + str(ticks_per_capture)
+                f"Invalid ticks_per_capture value {str(ticks_per_capture)}"
             )
 
         command_to_send = RGBCameraRateCommand(
@@ -401,8 +395,7 @@ class JointRotationSensor(HolodeckSensor):
             self.elements = 23
         else:
             raise HolodeckConfigurationException(
-                "Attempting to use JointRotationSensor with unsupported"
-                "agent type '{}'!".format(agent_type)
+                f"Attempting to use JointRotationSensor with unsupportedagent type '{agent_type}'!"
             )
 
         super(JointRotationSensor, self).__init__(
@@ -439,8 +432,7 @@ class PressureSensor(HolodeckSensor):
             self.elements = 16
         else:
             raise HolodeckConfigurationException(
-                "Attempting to use PressureSensor with unsupported"
-                "agent type '{}'!".format(agent_type)
+                f"Attempting to use PressureSensor with unsupportedagent type '{agent_type}'!"
             )
 
         super(PressureSensor, self).__init__(
@@ -472,8 +464,7 @@ class RelativeSkeletalPositionSensor(HolodeckSensor):
             self.elements = 17
         else:
             raise HolodeckConfigurationException(
-                "Attempting to use RelativeSkeletalPositionSensor with unsupported"
-                "agent type {}!".format(agent_type)
+                f"Attempting to use RelativeSkeletalPositionSensor with unsupportedagent type {agent_type}!"
             )
         super(RelativeSkeletalPositionSensor, self).__init__(
             client, agent_name, agent_type, name, config
@@ -700,9 +691,7 @@ class SensorDefinition:
 
         """
         param_str = json.dumps(self.config)
-        # Prepare configuration string for transport to the engine
-        param_str = param_str.replace('"', '\\"')
-        return param_str
+        return param_str.replace('"', '\\"')
 
     def __init__(
         self,

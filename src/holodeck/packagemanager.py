@@ -46,7 +46,7 @@ def available_packages():
         index = json.loads(index)
     except urllib.error.URLError as err:
         print(
-            "Unable to communicate with backend ({}), {}".format(url, err.reason),
+            f"Unable to communicate with backend ({url}), {err.reason}",
             file=sys.stderr,
         )
         raise
@@ -109,7 +109,7 @@ def world_info(world_name, world_config=None, base_indent=0):
                     world_config = world
 
     if world_config is None:
-        raise HolodeckException("Couldn't find world " + world_name)
+        raise HolodeckException(f"Couldn't find world {world_name}")
 
     print(base_indent * " ", world_config["name"])
     base_indent += 4
@@ -151,15 +151,15 @@ def scenario_info(scenario_name="", scenario=None, base_indent=0):
     """
     if scenario is None:
         # Find this file in the worlds/ directory
-        filename = "{}.json".format(scenario_name)
+        filename = f"{scenario_name}.json"
         scenario_file = _find_file_in_worlds_dir(filename)
 
         if scenario_file == "":
-            raise FileNotFoundError("The file {} could not be found".format(filename))
+            raise FileNotFoundError(f"The file {filename} could not be found")
 
         scenario = load_scenario_file(scenario_file)
 
-    print(base_indent * " ", "{}-{}:".format(scenario["world"], scenario["name"]))
+    print(base_indent * " ", f'{scenario["world"]}-{scenario["name"]}:')
     base_indent += 2
     if "agents" in scenario:
         _print_agent_info(scenario["agents"], base_indent)
@@ -196,7 +196,7 @@ def install(package_name, url=None):
 
     install_path = os.path.join(holodeck_path, "worlds", package_name)
 
-    print("Installing {} from {} to {}".format(package_name, url, install_path))
+    print(f"Installing {package_name} from {url} to {install_path}")
 
     _download_binary(url, install_path)
 
@@ -232,9 +232,7 @@ def _check_for_old_versions():
         print("Use packagemanager.prune() to delete old packages")
         print("Versions:", not_matching)
         print(
-            "Place an `ignore_old_packages` file in {} to suppress this message".format(
-                path
-            )
+            f"Place an `ignore_old_packages` file in {path} to suppress this message"
         )
         print()
 
@@ -260,7 +258,7 @@ def prune():
         if file == util.get_holodeck_version():
             continue
         # Delete it!
-        print("Deleting {}".format(file_path))
+        print(f"Deleting {file_path}")
         shutil.rmtree(file_path)
 
     print("Done")
@@ -309,7 +307,7 @@ def get_scenario(scenario_name):
         :obj:`dict`: A dictionary containing the configuration file
 
     """
-    config_path = _find_file_in_worlds_dir(scenario_name + ".json")
+    config_path = _find_file_in_worlds_dir(f"{scenario_name}.json")
 
     if config_path == "":
         raise FileNotFoundError(
@@ -340,9 +338,9 @@ def get_binary_path_for_package(package_name):
             if config["name"] == package_name:
                 return os.path.join(path, config["path"])
         except KeyError:
-            print("Error parsing config file for {}".format(path))
+            print(f"Error parsing config file for {path}")
 
-    raise NotFoundException("Package `{}` not found!".format(package_name))
+    raise NotFoundException(f"Package `{package_name}` not found!")
 
 
 def get_binary_path_for_scenario(scenario_name):
@@ -356,7 +354,7 @@ def get_binary_path_for_scenario(scenario_name):
         :obj:`dict`: A dictionary containing the configuration file
 
     """
-    scenario_path = _find_file_in_worlds_dir(scenario_name + ".json")
+    scenario_path = _find_file_in_worlds_dir(f"{scenario_name}.json")
     root = os.path.dirname(scenario_path)
     config_path = os.path.join(root, "config.json")
     with open(config_path, "r") as f:
@@ -383,7 +381,7 @@ def get_package_config_for_scenario(scenario):
                 return config
 
     raise HolodeckException(
-        "Could not find a package that contains world {}".format(world_name)
+        f"Could not find a package that contains world {world_name}"
     )
 
 
@@ -414,7 +412,7 @@ def _iter_scenarios(world_name):
     """
 
     # Find a scenario for this world
-    a_scenario = _find_file_in_worlds_dir("{}-*".format(world_name))
+    a_scenario = _find_file_in_worlds_dir(f"{world_name}-*")
 
     if a_scenario is None:
         return
@@ -429,7 +427,7 @@ def _iter_scenarios(world_name):
             continue
         if not file_name.endswith(".json"):
             continue
-        if not fnmatch.fnmatch(file_name, "{}-*.json".format(world_name)):
+        if not fnmatch.fnmatch(file_name, f"{world_name}-*.json"):
             continue
 
         full_path = os.path.join(world_path, file_name)

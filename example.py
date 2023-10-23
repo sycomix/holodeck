@@ -14,7 +14,7 @@ def uav_example():
     # This line can be used to change the control scheme for an agent
     # env.agents["uav0"].set_control_scheme(ControlSchemes.UAV_ROLL_PITCH_YAW_RATE_ALT)
 
-    for i in range(10):
+    for _ in range(10):
         env.reset()
 
         # This command tells the UAV to not roll or pitch, but to constantly yaw left at
@@ -40,7 +40,7 @@ def sphere_example():
 
     # This command is to constantly rotate to the right
     command = 2
-    for i in range(10):
+    for _ in range(10):
         env.reset()
         for _ in range(1000):
             state, reward, terminal, _ = env.step(command)
@@ -59,7 +59,7 @@ def android_example():
     # The Android's command is a 94 length vector representing torques to be applied at each
     # of his joints
     command = np.ones(94) * 10
-    for i in range(10):
+    for _ in range(10):
         env.reset()
         for j in range(1000):
             if j % 50 == 0:
@@ -79,7 +79,7 @@ def multi_agent_example():
 
     cmd0 = np.array([0, 0, -2, 10])
     cmd1 = np.array([0, 0, 0])
-    for i in range(10):
+    for _ in range(10):
         env.reset()
         env.tick()
         env.act("uav0", cmd0)
@@ -176,7 +176,7 @@ def editor_example():
     env = HolodeckEnvironment(scenario=config, start_world=False)
     command = [0, 0, 10, 50]
 
-    for i in range(10):
+    for _ in range(10):
         env.reset()
         for _ in range(1000):
             state, reward, terminal, _ = env.step(command)
@@ -216,7 +216,7 @@ def editor_multi_agent_example():
     cmd0 = np.array([0, 0, -2, 10])
     cmd1 = np.array([0, 0, 5, 10])
 
-    for i in range(10):
+    for _ in range(10):
         env.reset()
         env.act("uav0", cmd0)
         env.act("uav1", cmd1)

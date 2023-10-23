@@ -27,10 +27,6 @@ def test_rgb_camera_not_null(env_scenario):
     # Get pixel data
     state = env.tick()
     for agent, camera in agent_camera_names:
-        if len(env.agents) == 1:
-            pixels = state[camera]
-        else:
-            pixels = state[agent][camera]
-
+        pixels = state[camera] if len(env.agents) == 1 else state[agent][camera]
         # ensure that the pixels aren't all close to zero
         assert pixels.mean() > 1

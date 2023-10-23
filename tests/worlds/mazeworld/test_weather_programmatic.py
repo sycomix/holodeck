@@ -37,7 +37,7 @@ def test_weather_type_programmatic(
     err = compare_rgb_sensor_data_with_baseline(
         weather_env.tick()["TestCamera"],
         request.fspath.dirname,
-        "weather_type_{}".format(weather_type),
+        f"weather_type_{weather_type}",
     )
     assert err < max_err
 
@@ -65,7 +65,7 @@ def test_weather_time_programmatic(
     err = compare_rgb_sensor_data_with_baseline(
         weather_env.tick()["TestCamera"],
         request.fspath.dirname,
-        "weather_time_{}".format(hour),
+        f"weather_time_{hour}",
     )
 
     assert err < max_err
@@ -102,7 +102,7 @@ def test_weather_day_cycle_programmatic(
     err_before = compare_rgb_sensor_data_with_baseline(
         weather_env.tick()["TestCamera"],
         request.fspath.dirname,
-        "weather_time_before_{}".format(cycle_length),
+        f"weather_time_before_{cycle_length}",
     )
 
     weather_env.tick(ticks)
@@ -110,7 +110,7 @@ def test_weather_day_cycle_programmatic(
     err_after = compare_rgb_sensor_data_with_baseline(
         weather_env.tick()["TestCamera"],
         request.fspath.dirname,
-        "weather_time_after_{}".format(cycle_length),
+        f"weather_time_after_{cycle_length}",
     )
 
     assert err_before < max_err_before
@@ -140,7 +140,7 @@ def test_weather_fog_density_programmatic(
     err = compare_rgb_sensor_data_with_baseline(
         weather_env.tick()["TestCamera"],
         request.fspath.dirname,
-        "weather_fog_density_{}".format(fog_density),
+        f"weather_fog_density_{fog_density}",
     )
 
     assert err < max_err

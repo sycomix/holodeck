@@ -62,17 +62,17 @@ def test_joint_rotation_sensor(joint_agent_type):
     binary_path = holodeck.packagemanager.get_binary_path_for_package("DefaultWorlds")
 
     with holodeck.environments.HolodeckEnvironment(
-        scenario=configs[agent_type],
-        binary_path=binary_path,
-        show_viewport=False,
-        uuid=str(uuid.uuid4()),
-    ) as env:
+            scenario=configs[agent_type],
+            binary_path=binary_path,
+            show_viewport=False,
+            uuid=str(uuid.uuid4()),
+        ) as env:
 
         # Let the Android collapse into a twitching mess on the ground
         for _ in range(200):
             env.tick()
 
-        failures = list()
+        failures = []
 
         num_joints = len(joints)
         num_steps = 10
@@ -125,16 +125,12 @@ def test_joint_rotation_sensor(joint_agent_type):
             if abs(abs(post_rotation_forward) - abs(post_rotation_backward)) < 1e-3:
                 if abs(abs(pre_rotation) - abs(post_rotation_forward)) < 1e-3:
                     failures.append(
-                        "{}: After applying positive max torque, before: {}, after: {}".format(
-                            joints[i], pre_rotation, post_rotation_forward
-                        )
+                        f"{joints[i]}: After applying positive max torque, before: {pre_rotation}, after: {post_rotation_forward}"
                     )
 
                 if abs(abs(pre_rotation) - abs(post_rotation_backward)) < 1e-3:
                     failures.append(
-                        "{}: After applying negative max torque, before: {}, after: {}".format(
-                            joints[i], pre_rotation, post_rotation_backward
-                        )
+                        f"{joints[i]}: After applying negative max torque, before: {pre_rotation}, after: {post_rotation_backward}"
                     )
 
             # Let things settle
@@ -142,8 +138,8 @@ def test_joint_rotation_sensor(joint_agent_type):
                 env.tick()
 
         if failures:
-            print("\nGot {} failures...".format(len(failures)))
+            print(f"\nGot {len(failures)} failures...")
             for fail in failures:
                 print(fail)
 
-        assert len(failures) == 0
+        assert not failures

@@ -87,7 +87,7 @@ class ContinuousActionSpace(ActionSpace):
         return self.sample_fn(self._shape)
 
     def __repr__(self):
-        return "[ContinuousActionSpace " + str(self._shape) + "]"
+        return f"[ContinuousActionSpace {str(self._shape)}]"
 
     @staticmethod
     def _default_sample_fn(shape):

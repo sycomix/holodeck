@@ -37,7 +37,7 @@ class HolodeckClient:
         elif os.name == "posix":
             self.__posix_init__()
         else:
-            raise HolodeckException("Currently unsupported os: " + os.name)
+            raise HolodeckException(f"Currently unsupported os: {os.name}")
 
     def __windows_init__(self):
         import win32event
@@ -77,10 +77,10 @@ class HolodeckClient:
         import posix_ipc
 
         self._semaphore1 = posix_ipc.Semaphore(
-            "/HOLODECK_SEMAPHORE_SERVER" + self._uuid
+            f"/HOLODECK_SEMAPHORE_SERVER{self._uuid}"
         )
         self._semaphore2 = posix_ipc.Semaphore(
-            "/HOLODECK_SEMAPHORE_CLIENT" + self._uuid
+            f"/HOLODECK_SEMAPHORE_CLIENT{self._uuid}"
         )
 
         # Unfortunately, OSX doesn't support sem_timedwait(), so setting this timeout
